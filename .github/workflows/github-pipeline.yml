@@ -19,21 +19,21 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image for DEV
-      if: github.ref == 'refs/heads/DEV'
-      run: |
-        docker build -t alexstanevko/digital-ocean-vue3-test:dev .
-        docker push alexstanevko/digital-ocean-vue3-test:dev
+    # - name: Build and push Docker image for DEV
+    #   if: github.ref == 'refs/heads/DEV'
+    #   run: |
+    #     docker build -t alexstanevko/digital-ocean-vue3-test:dev .
+    #     docker push alexstanevko/digital-ocean-vue3-test:dev
 
-    - name: Deploy to Development Server
-      if: github.ref == 'refs/heads/DEV'
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_DEV }}
-        SERVER_IP: ${{ secrets.DEV_SERVER_IP }}
-      run: |
-        echo "$SSH_PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        ssh -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:dev && docker stop frontendvue3app || true && docker rm frontendvue3app || true && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:dev"
+    # - name: Deploy to Development Server
+    #   if: github.ref == 'refs/heads/DEV'
+    #   env:
+    #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_DEV }}
+    #     SERVER_IP: ${{ secrets.DEV_SERVER_IP }}
+    #   run: |
+    #     echo "$SSH_PRIVATE_KEY" > private_key.pem
+    #     chmod 600 private_key.pem
+    #     ssh -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:dev && docker stop frontendvue3app || true && docker rm frontendvue3app || true && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:dev"
 
     - name: Build and push Docker image for PROD
       if: github.ref == 'refs/heads/PROD'
