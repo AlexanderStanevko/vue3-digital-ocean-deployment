@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 # Удаление символов возврата каретки и сохранение SSH-ключа для подключения к load balancer
 echo "$SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER" | tr -d '\r' > load_balancer_key.pem
@@ -30,5 +29,3 @@ echo "SERVER_IP=$new_active_server_ip" >> $GITHUB_ENV
 echo "SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
 echo "$new_active_server_ssh_key" | tr -d '\r' >> $GITHUB_ENV
 echo "EOF" >> $GITHUB_ENV
-
-set +x
