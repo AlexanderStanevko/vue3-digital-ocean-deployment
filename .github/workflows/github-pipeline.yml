@@ -41,12 +41,29 @@ jobs:
         docker build -t alexstanevko/digital-ocean-vue3-test:latest .
         docker push alexstanevko/digital-ocean-vue3-test:latest
 
-    - name: Deploy to Production Server
+    - name: Determining the target server for PROD deployment
       if: github.ref == 'refs/heads/PROD'
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_PROD }}
-        SERVER_IP: ${{ secrets.PROD_SERVER_IP }}
+        PROD_1_IP: ${{ secrets.PROD_SERVER_IP }}
+        PROD_2_IP: ${{ secrets.PROD_SERVER_IP_2 }}
+        SSH_PRIVATE_KEY_DIGITAL_OCEAN_PROD_1: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_PROD }}
+        SSH_PRIVATE_KEY_DIGITAL_OCEAN_PROD_2: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_PROD_2 }}
+        SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER }}
+        LOAD_BALANCER_SERVER_IP: ${{ secrets.LOAD_BALANCER_SERVER_IP }}
+      run: ./setActiveProdEnv.sh
+
+    - name: Deploy to Production Server
+      if: github.ref == 'refs/heads/PROD'
       run: |
         echo "$SSH_PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
-        ssh -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:latest && docker stop frontendvue3app || true && docker rm frontendvue3app || true && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:latest"
+        ssh -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:latest && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:latest"
+
+    - name: Update Nginx Configuration on Load Balancer
+      if: github.ref == 'refs/heads/PROD'
+      env:
+        SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER }}
+        LOAD_BALANCER_SERVER_IP: ${{ secrets.LOAD_BALANCER_SERVER_IP }}
+        PROD_1_IP: ${{ secrets.PROD_SERVER_IP }}
+        PROD_2_IP: ${{ secrets.PROD_SERVER_IP_2 }}
+      run: ./updateNginxConfig.sh        
