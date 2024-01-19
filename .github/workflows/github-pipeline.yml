@@ -5,6 +5,10 @@ on:
     branches:
       - DEV
       - PROD
+  pull_request:
+    branches:
+      - DEV
+      - PROD
 
 jobs:
   build-and-deploy:
