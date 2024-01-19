@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 
-# Сохранение SSH-ключа для подключения к load balancer
-echo "$SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER" > load_balancer_key.pem
+# Удаление символов возврата каретки и сохранение SSH-ключа для подключения к load balancer
+echo "$SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER" | tr -d '\r' > load_balancer_key.pem
 chmod 600 load_balancer_key.pem
 
 # Получение текущего активного upstream на load balancer
@@ -21,6 +21,6 @@ fi
 
 # Установка переменных окружения
 echo "SERVER_IP=$target_server" >> $GITHUB_ENV
-echo "SSH_PRIVATE_KEY=$target_ssh_key" >> $GITHUB_ENV
+echo "SSH_PRIVATE_KEY=$(echo "$target_ssh_key" | tr -d '\r')" >> $GITHUB_ENV
 
 set +x
