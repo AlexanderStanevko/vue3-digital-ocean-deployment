@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:latest && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:latest"
+          ssh -vvv -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:latest && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:latest"
 
       - name: Update Nginx Configuration on Load Balancer
         run: ./updateNginxConfig.sh
