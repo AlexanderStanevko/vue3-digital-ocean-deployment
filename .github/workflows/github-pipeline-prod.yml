@@ -26,6 +26,11 @@ jobs:
           docker build -t alexstanevko/digital-ocean-vue3-test:latest .
           docker push alexstanevko/digital-ocean-vue3-test:latest
 
+      - name: Set execute permission for scripts
+        run: |
+          chmod +x ./setActiveProdEnv.sh
+          chmod +x ./updateNginxConfig.sh 
+
       - name: Determining the target server for PROD deployment
         env:
           PROD_1_IP: ${{ secrets.PROD_SERVER_IP }}
