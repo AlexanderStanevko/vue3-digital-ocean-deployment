@@ -48,4 +48,8 @@ jobs:
           ssh -vvv -o StrictHostKeyChecking=no -i private_key.pem root@$SERVER_IP "docker pull alexstanevko/digital-ocean-vue3-test:latest && docker stop frontendvue3app || true && docker rm frontendvue3app || true && docker run -d --name frontendvue3app -p 80:80 alexstanevko/digital-ocean-vue3-test:latest"
 
       - name: Update Nginx Configuration on Load Balancer
+        env:
+          LOAD_BALANCER_SERVER_IP: ${{ secrets.LOAD_BALANCER_SERVER_IP }}
+          SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER }}
         run: ./updateNginxConfig.sh
+
