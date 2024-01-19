@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 # Сохранение SSH-ключа для подключения к load balancer
 echo "$SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER" > load_balancer_key.pem
@@ -21,3 +22,5 @@ fi
 # Установка переменных окружения
 echo "SERVER_IP=$target_server" >> $GITHUB_ENV
 echo "SSH_PRIVATE_KEY=$target_ssh_key" >> $GITHUB_ENV
+
+set +x
