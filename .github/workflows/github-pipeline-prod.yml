@@ -53,3 +53,19 @@ jobs:
           SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER: ${{ secrets.SSH_PRIVATE_KEY_DIGITAL_OCEAN_LOAD_BALANCER }}
         run: ./updateNginxConfig.sh
 
+      - name: Notify Telegram on Deployment Success
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: 'Deployment to PROD successful'
+
+      - name: Notify Telegram on Deployment Failure
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: 'Deployment to PROD failed'
+
